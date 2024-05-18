@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+        }
+    
+        h1 {
+          text-align: center;
+        }
+    
+        form {
+          max-width: 400px;
+          margin: 0 auto;
+        }
+    
+        label {
+          display: block;
+          margin-bottom: 10px;
+          font-weight: bold;
+        }
+    
+        .input-field {
+          width: 100%;
+          padding: 8px;
+          margin-bottom: 20px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+    
+        .submit-button {
+          background-color: #4CAF50;
+          color: white;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+    
+        .submit-button:hover {
+          background-color: #45a049;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Actualizar Personaje</h1>
+      <form id="personajeForm">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" class="input-field" name="name" required>
+        
+        <label for="gender">Género:</label>
+        <select id="gender" class="input-field" name="gender" required>
+          <option value="Male">Masculino</option>
+          <option value="Female">Femenino</option>
+        </select>
+        
+        <label for="species">Especie:</label>
+        <input type="text" id="species" class="input-field" name="species" required>
+        
+        <label for="image">Imagen:</label>
+        <input type="text" id="image" class="input-field" name="image" required>
+        
+        <label for="status">Estado:</label>
+        <select id="status" class="input-field" name="status" required>
+          <option value="Alive">Vivo</option>
+          <option value="Dead">Muerto</option>
+        </select>
+        
+        <button type="submit" class="submit-button">Actualizar</button>
+      </form>
+      
+      <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const personajeID = urlParams.get('id');
+    
+        // Obtén el formulario y los campos de entrada
+        const form = document.getElementById("personajeForm");
+        const nameInput = document.getElementById("name");
+        const genderInput = document.getElementById("gender");
+        const speciesInput = document.getElementById("species");
+        const imageInput = document.getElementById("image");
+        const statusInput = document.getElementById("status");
+    
+        // Rellena los campos del formulario con los datos del personaje
+        fetch(`/personaje/${personajeID}`)
+          .then(response => response.json())
+          .then(data => {
+            nameInput.value = data.name;
+            genderInput.value = data.gender;
+            speciesInput.value = data.species;
+            imageInput.value = data.image;
+            statusInput.value = data.status;
+          })
+          .catch(error => {
+            console.error("Error al obtener los datos del personaje:", error);
+          });
+    
+        // Escucha el evento de envío del formulario
+        form.addEventListener("submit", function(event) {
+          event.preventDefault();
+    
+          // Obtén los datos del formulario actualizados
+          const formData = new FormData(this);
+    
+          // Realiza la solicitud PUT al servidor para actualizar el personaje
+          fetch(`/actualizar-personaje/${personajeID}`, {
+            method: "PUT",
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data); // Maneja la respuesta del servidor
+          })
+          .catch(error => {
+            console.error("Error al actualizar el personaje:", error);
+          });
+        });
+      </script>
+    </body>
+    </html>
